@@ -72,3 +72,4 @@ C:\blazor\ChatbotBlazor\ChatbotBlazor\obj\Debug\net9.0\refint\ChatbotBlazor.dll
 C:\blazor\ChatbotBlazor\ChatbotBlazor\obj\Debug\net9.0\ChatbotBlazor.pdb
 C:\blazor\ChatbotBlazor\ChatbotBlazor\obj\Debug\net9.0\ChatbotBlazor.genruntimeconfig.cache
 C:\blazor\ChatbotBlazor\ChatbotBlazor\obj\Debug\net9.0\ref\ChatbotBlazor.dll
+C:\blazor\ChatbotBlazor\ChatbotBlazor\obj\Debug\net9.0\ChatbotBlazor.sourcelink.json

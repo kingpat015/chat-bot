@@ -25,7 +25,7 @@
         
         @if (isLoading)
         {
-            <MudPaper Class="pa-2 mr-auto rounded-lg" Color="Color.Surface" Style="max-width:70%;">
+            <MudPaper Class="pa-2 mr-auto rounded-lg" Color="Color.Surface" Style="max-width:50%;">
                 <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
                 <MudText Typo="Typo.body2" Class="mt-1">Bot is typing...</MudText>
             </MudPaper>
@@ -43,7 +43,7 @@
                       Disabled="@isLoading" />
         <MudButton OnClick="SendMessage"
                Variant="Variant.Filled"
-               Color="Color.Success"
+               Color="Color.Primary"
                Disabled="@(isLoading || string.IsNullOrWhiteSpace(userInput))">
             <ChildContent>
                 @if (isLoading)
@@ -52,7 +52,7 @@
                 }
                 else
                 {
-                    <MudIcon Icon="@Icons.Material.Filled.Send" Style="color:white" />
+                    <MudIcon Icon="@Icons.Material.Filled.Send" Color="Color.Surface" />
                 }
             </ChildContent>
         </MudButton>
