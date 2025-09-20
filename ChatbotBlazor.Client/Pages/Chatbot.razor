@@ -1,0 +1,115 @@
+@page "/chatbot"
+@using MudBlazor
+@using ChatbotBlazor.Client.Services
+
+<MudPaper Class="pa-6 mx-auto mt-10" Elevation="10" 
+          Style="width:100%; height:100%; display:flex; flex-direction:column;">
+    
+    <!-- Chat messages -->
+    <MudStack Spacing="2" Class="overflow-auto" Style="flex:1;">
+        @foreach (var msg in messages)
+        {
+            if (msg.IsUser)
+            {
+                <MudPaper Class="pa-2 ml-auto rounded-lg" Color="Color.Surface" Style="max-width:50%; text-align: justify;" Elevation="8">
+                    <MudText Typo="Typo.body2">@msg.Text</MudText>
+                </MudPaper>
+            }
+            else
+            {
+                <MudPaper Class="pa-2 mr-auto rounded-lg" Color="Color.Surface" Style="max-width:50%; text-align: justify;" Elevation="8">
+                    <MudText Typo="Typo.body2">@msg.Text</MudText>
+                </MudPaper>
+            }
+        }
+        
+        @if (isLoading)
+        {
+            <MudPaper Class="pa-2 mr-auto rounded-lg" Color="Color.Surface" Style="max-width:70%;">
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+                <MudText Typo="Typo.body2" Class="mt-1">Bot is typing...</MudText>
+            </MudPaper>
+        }
+    </MudStack>
+
+    <MudDivider Class="my-2" />
+
+    <!-- Input area -->
+    <MudStack Row="true" Spacing="1">
+        <MudTextField @bind-Value="userInput" 
+                      Placeholder="Type your message..." 
+                      FullWidth="true"
+                      @onkeypress="@(async (e) => { if (e.Key == "Enter") await SendMessage(); })" 
+                      Disabled="@isLoading" />
+        <MudButton OnClick="SendMessage"
+               Variant="Variant.Filled"
+               Color="Color.Success"
+               Disabled="@(isLoading || string.IsNullOrWhiteSpace(userInput))">
+            <ChildContent>
+                @if (isLoading)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Inherit" />
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Send" Style="color:white" />
+                }
+            </ChildContent>
+        </MudButton>
+    </MudStack>
+</MudPaper>
+
+@code {
+    private string userInput = string.Empty;
+    private List<Message> messages = new();
+    private bool isLoading = false;
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(userInput) || isLoading)
+            return;
+
+        var currentInput = userInput;
+        userInput = string.Empty; // Clear input immediately
+        isLoading = true;
+
+        try
+        {
+            // Add user message
+            messages.Add(new Message { Text = currentInput, IsUser = true });
+            StateHasChanged(); // Update UI
+
+            // Get bot response using static method
+            var botResponse = await BotService.GetReplyAsync(currentInput);
+            
+            // Add bot response
+            messages.Add(new Message { Text = botResponse, IsUser = false });
+        }
+        catch (Exception ex)
+        {
+            // Handle any errors
+            messages.Add(new Message { Text = $"Error: {ex.Message}", IsUser = false });
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged(); // Update UI
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        // Add welcome message
+        messages.Add(new Message 
+        { 
+            Text = "Hello! I'm your AI assistant. How can I help you today?", 
+            IsUser = false 
+        });
+    }
+
+    public class Message
+    {
+        public string Text { get; set; } = string.Empty;
+        public bool IsUser { get; set; }
+    }
+}
